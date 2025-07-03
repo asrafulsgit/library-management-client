@@ -31,7 +31,7 @@ const Router = createBrowserRouter([
                 Component : BorrowSummary
             },
             {
-                path : '/edit-book/:id',
+                path : 'edit-book/:id',
                 Component : EditBook
             },
             {

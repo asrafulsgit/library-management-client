@@ -1,46 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useBorrowBookMutation, useDeleteBookMutation, useGetBooksQuery } from "../controllers/apiSlice";
+import type { Book } from "../interfaces/book.interface";
 
-interface Book {
-  id: string;
-  title: string;
-  author: string;
-  genre: string;
-  isbn: string;
-  description: string;
-  cover : string;
-  copies: number;
-  isAvailable: boolean;
-}
 
-const initialBooks: Book[] = [
-  {
-    id: "1",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    genre: "Classic",
-    isbn: "9780743273565",
-    description: "A novel set in the Roaring Twenties.",
-    cover: "https://covers.openlibrary.org/b/id/7222246-L.jpg",
-    copies: 3,
-    isAvailable: true,
-  },
-  {
-    id: "2",
-    title: "1984",
-    author: "George Orwell",
-    genre: "Dystopian",
-    isbn: "9780451524935",
-    description: "A chilling prophecy about the future.",
-    cover: "https://covers.openlibrary.org/b/id/8228691-L.jpg",
-    copies: 0,
-    isAvailable: false,
-  },
-];
+
+
 
 const Books: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>(initialBooks);
+  const { data, isLoading, error } = useGetBooksQuery();
 
+  const [books, setBooks] = useState<Book[]>([]);
+
+  useEffect(()=>{
+      if(data?.data){
+        setBooks(data?.data)
+      }
+  },[data])
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
   
@@ -58,28 +34,17 @@ const Books: React.FC = () => {
     setIsBorrowModalOpen(true);
   };
 
-  const handleBorrowConfirmed = (bookId: string, quantity: number) => {
-    setBooks((prev) =>
-      prev.map((b) => {
-        if (b.id === bookId) {
-          const updatedCopies = b.copies - quantity;
-          return {
-            ...b,
-            copies: updatedCopies,
-            isAvailable: updatedCopies > 0,
-          };
-        }
-        return b;
-      })
-    );
-  };
-
-
-
   
 
+  if (isLoading) {
+    return (
+      <div className="min-h-[90vh] flex items-center justify-center text-gray-400">
+        Loading...
+      </div>
+    );
+  }
   return (
-    <section className="min-h-[90vh] pt-25 pb-10 px-4 max-w-6xl mx-auto text-white">
+    <section className="min-h-[90vh] pt-25 pb-10 px-4 max-w-7xl mx-auto text-white">
       <div className="text-center">
         <h1 className="text-3xl md:text-4xl font-bold mb-3">Books</h1>
         <p className="text-gray-400 mb-6">
@@ -97,7 +62,7 @@ const Books: React.FC = () => {
       </div>
 
       <div className="overflow-x-auto bg-neutral-900 rounded shadow">
-        <table className="min-w-[1100px] w-full">
+        <table className="min-w-[1150px] w-full">
           <thead className="bg-neutral-700">
             <tr>
               <th className="px-4 py-2 text-left">Title</th>
@@ -111,14 +76,14 @@ const Books: React.FC = () => {
           </thead>
           <tbody>
             {books.map((book) => (
-              <tr key={book.id} className="border-b border-neutral-700">
-                <td className="px-4 py-3">{book.title}</td>
+              <tr key={book._id} className="border-b border-neutral-700">
+                <td className="px-4 py-3">{book.title.length > 25 ? `${book.title.slice(0,25)}...` : book.title} </td>
                 <td className="px-4 py-3">{book.author}</td>
                 <td className="px-4 py-3">{book.genre}</td>
                 <td className="px-4 py-3">{book.isbn}</td>
                 <td className="px-4 py-3 text-center">{book.copies}</td>
                 <td className="px-4 py-3 text-center">
-                  {book.isAvailable ? (
+                  {book.available ? (
                     <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">
                       Available
                     </span>
@@ -129,14 +94,14 @@ const Books: React.FC = () => {
                   )}
                 </td>
                 <td className="px-4 py-3 text-center space-x-2">
-                  <Link to={`/books/${book.id}`}>
+                  <Link to={`/books/${book._id}`}>
                     <button
                       className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
                     >
                       View
                     </button>
                   </Link>
-                  <Link to={`/edit-book/${book.id}`}>
+                  <Link to={`/edit-book/${book._id}`}>
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
                   >
@@ -166,7 +131,6 @@ const Books: React.FC = () => {
         <BorrowModal
           book={selectedBook}
           onClose={() => setIsBorrowModalOpen(false)}
-          onBorrow={handleBorrowConfirmed}
         />
       )}
 
@@ -178,16 +142,13 @@ const Books: React.FC = () => {
       setIsDeleteModalOpen(false);
       setBookToDelete(null);
     }}
-    onConfirm={(id) => {
-      setBooks((prev) => prev.filter((b) => b.id !== id));
+    onConfirm={() => {
       setIsDeleteModalOpen(false);
       setBookToDelete(null);
     }}
   />
 )}
 
-
-    
     </section>
   );
 };
@@ -195,19 +156,17 @@ const Books: React.FC = () => {
 interface BorrowModalProps {
   book: Book;
   onClose: () => void;
-  onBorrow: (bookId: string, quantity: number) => void;
 }
 
 const BorrowModal: React.FC<BorrowModalProps> = ({
   book,
   onClose,
-  onBorrow,
 }) => {
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [dueDate, setDueDate] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const [borrowBook, { isLoading : borrowLoading, error : borrowError, isSuccess }] = useBorrowBookMutation();
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
     if (quantity <= 0) {
@@ -220,14 +179,18 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
       return;
     }
 
-    // Simulated API call
-    console.log("Borrow request:", { bookId: book.id, quantity, dueDate });
-
-    onBorrow(book.id, quantity);
-
-    alert("Book borrowed successfully!");
+    try {
+    await borrowBook({
+      bookId: book._id,
+      quantity: quantity,
+      dueDate: dueDate,
+    }).unwrap();
     onClose();
-    // navigate("/borrowed-summary");
+    navigate("/borrow-summary");
+  } catch (err) {
+    console.error("Borrow error:", err);
+    alert("Failed to borrow the book.");
+  }
   };
 
   return (
@@ -282,7 +245,7 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
               type="submit"
               className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded"
             >
-              Confirm Borrow
+              {borrowLoading ? 'Borrowing...' :  'Confirm Borrow'}
             </button>
           </div>
         </form>
@@ -294,14 +257,29 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
 interface DeleteModalProps {
   book: Book;
   onClose: () => void;
-  onConfirm: (bookId: string) => void;
+  onConfirm: () => void;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   book,
   onClose,
   onConfirm,
-}) => (
+}) => {
+
+  const [deleteBook, { isLoading, error }] = useDeleteBookMutation();
+
+  const handleDelete =async ()=>{
+    try {
+      await deleteBook(book?._id).unwrap();
+      onConfirm()
+    } catch (err) {
+      console.error("Failed to delete the book:", err);
+      alert("Failed to delete the book.");
+    }
+  }
+  
+
+  return(
   <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
     <div className="bg-neutral-800 rounded p-6 w-full max-w-md">
       <h2 className="text-xl font-semibold mb-4">Delete Book</h2>
@@ -316,15 +294,16 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           Cancel
         </button>
         <button
-          onClick={() => onConfirm(book.id)}
+          onClick={handleDelete}
           className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
         >
-          Delete
+         {isLoading ? 'Deleting' : 'Delete'}
         </button>
       </div>
     </div>
   </div>
-);
+)
+};
 
 
 

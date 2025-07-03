@@ -1,58 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-
-
-export interface Book {
-  id: string;
-  title: string;
-  author: string;
-  genre: string;
-  isbn: string;
-  description: string;
-  copies: number;
-  isAvailable: boolean;
-}
-
-const dummyBooks: Book[] = [
-  {
-    id: "1",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    genre: "Classic",
-    isbn: "9780743273565",
-    description: "A novel set in the Roaring Twenties.",
-    copies: 3,
-    isAvailable: true,
-  },
-  {
-    id: "2",
-    title: "1984",
-    author: "George Orwell",
-    genre: "Dystopian",
-    isbn: "9780451524935",
-    description: "A chilling prophecy about the future.",
-    copies: 0,
-    isAvailable: false,
-  },
-];
+import { useGetBookByIdQuery, useUpdateBookMutation } from "../controllers/apiSlice";
+import type { Book } from "../interfaces/book.interface";
 
 const EditBook: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  // const [triggerGetBooks] = useLazyGetBooksQuery();
+  const [updateBook, { isLoading : updateLoading, error : updateError }] = useUpdateBookMutation();
+  const { data, isLoading : intiLoading, error : getError } = useGetBookByIdQuery(id!);
   const [book, setBook] = useState<Book | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch book by ID
+  
   useEffect(() => {
-    const found = dummyBooks.find((b) => b.id === id);
-    if (found) {
-      setBook(found);
+    if (data?.data) {
+      setBook(data?.data);
     }
-    setLoading(false);
-  }, [id]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  }, [data]);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setBook((prev) =>
       prev
@@ -64,31 +31,53 @@ const EditBook: React.FC = () => {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!book) return;
 
-    // Business logic: mark unavailable if copies = 0
-    const updatedBook: Book = {
-      ...book,
-      isAvailable: book.copies > 0,
-    };
-
-    console.log("Updated book data:", updatedBook);
-
-    // Simulate API update
-    alert("Book updated successfully!");
-    navigate("/books");
+    try {
+       await updateBook({
+      id : book._id,
+      data : {
+        title: book.title,
+        author: book.author,
+        genre: book.genre,
+        isbn: book.isbn,
+        description: book.description,
+        copies: book.copies
+      }
+    }).unwrap();
+     navigate("/books");
+    } catch (error) {
+      console.log(error)
+    }
+    
   };
 
-  if (loading) return <p className="text-center text-gray-400">Loading...</p>;
-  if (!book) return <p className="text-center text-red-500">Book not found.</p>;
+  if (intiLoading) {
+    return (
+      <div className="min-h-[90vh] flex items-center justify-center text-gray-400">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!book) {
+    return (
+      <div
+        className="min-h-[90vh] flex items-center justify-center
+       text-red-600"
+      >
+        Book is not Found
+      </div>
+    );
+  }
 
   return (
     <section className="max-w-2xl mx-auto pt-25 pb-10 px-4 text-white">
       <h1 className="text-3xl font-bold mb-4">
-         Edit Book: <span className="text-blue-400">{book.title}</span>
-       </h1>
+        Edit Book: <span className="text-blue-400">{book.title}</span>
+      </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="title" className="block mb-1 font-medium">
@@ -120,14 +109,23 @@ const EditBook: React.FC = () => {
           <label htmlFor="genre" className="block mb-1 font-medium">
             Genre
           </label>
-          <input
+          <select
             id="genre"
             name="genre"
             value={book.genre}
             onChange={handleChange}
-            className="w-full px-4 py-2 rounded bg-base-100 border border-gray-600"
-          />
+            className="w-full px-4 py-2 rounded bg-base-100 border border-gray-600 text-white"
+          >
+            <option value="">Select a genre</option>
+            <option value="FICTION">FICTION</option>
+            <option value="NON_FICTION">NON_FICTION</option>
+            <option value="SCIENCE">SCIENCE</option>
+            <option value="HISTORY">HISTORY</option>
+            <option value="BIOGRAPHY">BIOGRAPHY</option>
+            <option value="FANTASY">FANTASY</option>
+          </select>
         </div>
+
         <div>
           <label htmlFor="isbn" className="block mb-1 font-medium">
             ISBN
@@ -179,7 +177,7 @@ const EditBook: React.FC = () => {
             type="submit"
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
           >
-            Save Changes
+            {updateLoading ? 'Changing...' : 'Save Changes'}
           </button>
         </div>
       </form>

@@ -1,35 +1,24 @@
-import React from "react";
-
-// Example aggregated data structure
-interface BorrowSummary {
-  id: string;
-  title: string;
-  isbn: string;
-  totalQuantity: number;
-}
-
-const summaryData: BorrowSummary[] = [
-  {
-    id: "1",
-    title: "The Great Gatsby",
-    isbn: "9780743273565",
-    totalQuantity: 12,
-  },
-  {
-    id: "2",
-    title: "1984",
-    isbn: "9780451524935",
-    totalQuantity: 8,
-  },
-  {
-    id: "3",
-    title: "To Kill a Mockingbird",
-    isbn: "9780061120084",
-    totalQuantity: 5,
-  },
-];
+import React, { useEffect, useState } from "react";
+import { useGetBorrowedSummaryQuery, type BookSummary } from "../controllers/apiSlice";
 
 const BorrowSummary: React.FC = () => {
+
+  const {data, isLoading,error}=useGetBorrowedSummaryQuery();
+
+  const [summaries,setSummaries]=useState<BookSummary[] | null>(null);
+  useEffect(()=>{
+    if(data?.data){
+      setSummaries(data?.data)
+    }
+  },[data])
+  if (isLoading) {
+    return (
+      <div className="min-h-[90vh] flex items-center justify-center text-gray-400">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <section className="pt-25 pb-16 bg-base-100 text-white min-h-[90vh]">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -50,10 +39,11 @@ const BorrowSummary: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {summaryData.map((record) => (
-                <tr key={record.id} className="border-b border-neutral-700">
-                  <td className="px-4 py-3">{record.title}</td>
-                  <td className="px-4 py-3">{record.isbn}</td>
+              {summaries?.map((record,index) => (
+                <tr key={index} className="border-b border-neutral-700">
+                  <td className="px-4 py-3">{
+                    record?.book?.title.length > 25 ? `${record?.book?.title.slice(0,25)}...` : record?.book?.title}</td>
+                  <td className="px-4 py-3">{record?.book?.isbn}</td>
                   <td className="px-4 py-3 text-center">{record.totalQuantity}</td>
                 </tr>
               ))}
