@@ -71,7 +71,8 @@ const Navbar: React.FC = () => {
                 pb-4 space-y-3 text-white flex flex-col ">
                 {navItems.map((item,index)=>(
             <NavLink key={index} to={item.path} className="">
-            <button className="hover:text-blue-500 transition cursor-pointer">
+            <button onClick={()=>setIsOpen(!isOpen)}
+            className="hover:text-blue-500 transition cursor-pointer">
               {item.name}
             </button>
           </NavLink>
