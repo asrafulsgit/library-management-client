@@ -41,7 +41,7 @@ const BorrowSummary: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto bg-neutral-800 rounded shadow">
-          <table className="min-w-full">
+          <table className="min-w-[600px] w-full">
             <thead className="bg-neutral-700">
               <tr>
                 <th className="px-4 py-2 text-left">Book Title</th>

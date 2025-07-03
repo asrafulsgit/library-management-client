@@ -7,7 +7,8 @@ const Navbar: React.FC = () => {
   const navItems =[
     {name : 'Home',path : '/'},
     {name : 'Books',path : '/books'},
-    {name : 'Borrowed Summary',path : '/borrowed-summary'}
+    {name : 'Add Books',path : '/create-book'},
+    {name : 'Borrowed Summary',path : '/borrow-summary'}
   ]
   return (
     <nav className="navbar_section fixed w-[100%] z-50 bg-neutral-900

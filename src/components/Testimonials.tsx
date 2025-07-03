@@ -68,7 +68,7 @@ const Testimonials: React.FC = () => {
               <p className="text-lg mb-6 italic">"{t.text}"</p>
               <div className="text-yellow-400 mb-4 flex pl-1">
                 {Array.from({ length: 5 }, (_, i) => (
-                  <span className="pr-1">
+                  <span key={i} className="pr-1">
                     <StarIcon key={i} filled={i + 1 <= Math.floor(t.rating)} />
                   </span>
                 ))}

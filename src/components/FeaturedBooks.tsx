@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 interface Book {
   id: number;
@@ -68,8 +69,20 @@ const books: Book[] = [
 ];
 
 const FeaturedBooks: React.FC = () => {
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
+  const handleBorrow = (book: Book) => {
+    setSelectedBook(book);
+    setIsBorrowModalOpen(true);
+  };
+
+  const handleBorrowConfirmed = (bookId: string, quantity: number) => {
+    
+  
+  };
   return (
-    <section id="featured" className="pt-10 pb-20 bg-[#2626269d] text-white">
+  <>  
+  <section id="featured" className="pt-10 pb-20 bg-[#2626269d] text-white">
       <div className="container mx-auto px-4">
         <div className="pb-3">
           <h2 className="text-3xl md:text-4xl font-bold mb-2 text-center">
@@ -128,6 +141,7 @@ const FeaturedBooks: React.FC = () => {
 
       <button
         disabled={!book.isAvailable}
+        onClick={() => handleBorrow(book)}
         className={`py-2 px-4 rounded-lg font-medium transition ${
           book.isAvailable
             ? "bg-blue-600 hover:bg-blue-700"
@@ -144,6 +158,114 @@ const FeaturedBooks: React.FC = () => {
         </div>
       </div>
     </section>
+    
+    {isBorrowModalOpen && selectedBook && (
+        <BorrowModal
+          book={selectedBook}
+          onClose={() => setIsBorrowModalOpen(false)}
+          onBorrow={handleBorrowConfirmed}
+        />
+      )}
+    </>
+  );
+};
+
+interface BorrowModalProps {
+  book: Book;
+  onClose: () => void;
+  onBorrow: (bookId: string, quantity: number) => void;
+}
+
+const BorrowModal: React.FC<BorrowModalProps> = ({
+  book,
+  onClose,
+  onBorrow,
+}) => {
+  // const navigate = useNavigate();
+  const [quantity, setQuantity] = useState(1);
+  const [dueDate, setDueDate] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (quantity <= 0) {
+      alert("Quantity must be at least 1.");
+      return;
+    }
+
+    if (quantity > book.copies) {
+      alert("Quantity exceeds available copies.");
+      return;
+    }
+
+    // Simulated API call
+    console.log("Borrow request:", { bookId: book.id, quantity, dueDate });
+
+    // onBorrow(book.id, quantity);
+
+    alert("Book borrowed successfully!");
+    onClose();
+    // navigate("/borrowed-summary");
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-neutral-800 rounded p-6 w-full max-w-md">
+        <h2 className="text-xl font-semibold mb-4">Borrow Book</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="quantity" className="block mb-1 font-medium">
+                Quantity
+              </label>
+              <input
+                id="quantity"
+                name="quantity"
+                type="number"
+                min={1}
+                max={book.copies}
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="w-full px-4 py-2 rounded bg-base-100 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                required
+              />
+              <p className="text-gray-400 text-sm mt-1">
+                Available copies: {book.copies}
+              </p>
+            </div>
+            <div>
+              <label htmlFor="dueDate" className="block mb-1 font-medium">
+                Due Date
+              </label>
+              <input
+                id="dueDate"
+                name="dueDate"
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-4 py-2 rounded bg-base-100 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                required
+              />
+            </div>
+          </div>
+          <div className="mt-6 flex justify-end space-x-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-600 rounded"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded"
+            >
+              Confirm Borrow
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

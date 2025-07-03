@@ -8,6 +8,7 @@ interface Book {
   genre: string;
   isbn: string;
   description: string;
+  cover : string;
   copies: number;
   isAvailable: boolean;
 }
@@ -20,6 +21,7 @@ const initialBooks: Book[] = [
     genre: "Classic",
     isbn: "9780743273565",
     description: "A novel set in the Roaring Twenties.",
+    cover: "https://covers.openlibrary.org/b/id/7222246-L.jpg",
     copies: 3,
     isAvailable: true,
   },
@@ -30,6 +32,7 @@ const initialBooks: Book[] = [
     genre: "Dystopian",
     isbn: "9780451524935",
     description: "A chilling prophecy about the future.",
+    cover: "https://covers.openlibrary.org/b/id/8228691-L.jpg",
     copies: 0,
     isAvailable: false,
   },
@@ -37,13 +40,17 @@ const initialBooks: Book[] = [
 
 const Books: React.FC = () => {
   const [books, setBooks] = useState<Book[]>(initialBooks);
+
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this book?")) {
-      setBooks((prev) => prev.filter((b) => b.id !== id));
-    }
+  
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
+
+
+  const handleDelete = (book: Book) => {
+    setBookToDelete(book);
+    setIsDeleteModalOpen(true);
   };
 
   const handleBorrow = (book: Book) => {
@@ -67,16 +74,9 @@ const Books: React.FC = () => {
     );
   };
 
-  const handleEdit = (book: Book) => {
-    setSelectedBook(book);
-    setIsEditModalOpen(true);
-  };
 
-  const handleEditSave = (updatedBook: Book) => {
-    setBooks((prev) =>
-      prev.map((b) => (b.id === updatedBook.id ? updatedBook : b))
-    );
-  };
+
+  
 
   return (
     <section className="min-h-[90vh] pt-25 pb-10 px-4 max-w-6xl mx-auto text-white">
@@ -97,7 +97,7 @@ const Books: React.FC = () => {
       </div>
 
       <div className="overflow-x-auto bg-neutral-900 rounded shadow">
-        <table className="min-w-full">
+        <table className="min-w-[1100px] w-full">
           <thead className="bg-neutral-700">
             <tr>
               <th className="px-4 py-2 text-left">Title</th>
@@ -129,13 +129,20 @@ const Books: React.FC = () => {
                   )}
                 </td>
                 <td className="px-4 py-3 text-center space-x-2">
+                  <Link to={`/books/${book.id}`}>
+                    <button
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
+                    >
+                      View
+                    </button>
+                  </Link>
+                  <Link to={`/edit-book/${book.id}`}>
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
-                    onClick={() => handleEdit(book)}
                   >
                     Edit
                   </button>
-
+                  </Link>
                   <button
                     className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
                     onClick={() => handleBorrow(book)}
@@ -144,7 +151,7 @@ const Books: React.FC = () => {
                   </button>
                   <button
                     className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-                    onClick={() => handleDelete(book.id)}
+                    onClick={() => handleDelete(book)}
                   >
                     Delete
                   </button>
@@ -163,13 +170,24 @@ const Books: React.FC = () => {
         />
       )}
 
-      {isEditModalOpen && selectedBook && (
-  <EditModal
-    book={selectedBook}
-    onClose={() => setIsEditModalOpen(false)}
-    onSave={handleEditSave}
+
+      {isDeleteModalOpen && bookToDelete && (
+  <DeleteModal
+    book={bookToDelete}
+    onClose={() => {
+      setIsDeleteModalOpen(false);
+      setBookToDelete(null);
+    }}
+    onConfirm={(id) => {
+      setBooks((prev) => prev.filter((b) => b.id !== id));
+      setIsDeleteModalOpen(false);
+      setBookToDelete(null);
+    }}
   />
 )}
+
+
+    
     </section>
   );
 };
@@ -273,125 +291,42 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
   );
 };
 
-interface EditModalProps {
+interface DeleteModalProps {
   book: Book;
   onClose: () => void;
-  onSave: (updatedBook: Book) => void;
+  onConfirm: (bookId: string) => void;
 }
 
-const EditModal: React.FC<EditModalProps> = ({ book, onClose, onSave }) => {
-  const [formData, setFormData] = useState<Book>({ ...book });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "copies" ? Number(value) : value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Business logic: Mark unavailable if copies = 0
-    const updatedBook = {
-      ...formData,
-      isAvailable: formData.copies > 0,
-    };
-    onSave(updatedBook);
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-neutral-800 rounded p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Edit Book</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="title" className="block mb-1 font-medium">
-              Title
-            </label>
-            <input
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-base-100 text-white border border-gray-600"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="author" className="block mb-1 font-medium">
-              Author
-            </label>
-            <input
-              id="author"
-              name="author"
-              value={formData.author}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-base-100 text-white border border-gray-600"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="genre" className="block mb-1 font-medium">
-              Genre
-            </label>
-            <input
-              id="genre"
-              name="genre"
-              value={formData.genre}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-base-100 text-white border border-gray-600"
-            />
-          </div>
-          <div>
-            <label htmlFor="isbn" className="block mb-1 font-medium">
-              ISBN
-            </label>
-            <input
-              id="isbn"
-              name="isbn"
-              value={formData.isbn}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-base-100 text-white border border-gray-600"
-            />
-          </div>
-          <div>
-            <label htmlFor="copies" className="block mb-1 font-medium">
-              Copies
-            </label>
-            <input
-              id="copies"
-              name="copies"
-              type="number"
-              min={0}
-              value={formData.copies}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-base-100 text-white border border-gray-600"
-            />
-          </div>
-          <div className="mt-6 flex justify-end space-x-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-600 rounded"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  book,
+  onClose,
+  onConfirm,
+}) => (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div className="bg-neutral-800 rounded p-6 w-full max-w-md">
+      <h2 className="text-xl font-semibold mb-4">Delete Book</h2>
+      <p className="mb-4 text-gray-300">
+        Are you sure you want to delete <strong>{book.title}</strong>?
+      </p>
+      <div className="flex justify-end space-x-2">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-600 rounded"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => onConfirm(book.id)}
+          className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+        >
+          Delete
+        </button>
       </div>
     </div>
-  );
-};
+  </div>
+);
+
+
+
 
 export default Books;
