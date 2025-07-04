@@ -75,7 +75,11 @@ const FeaturedBooks: React.FC = () => {
     </span>
   </div>
 
-  <p className="text-sm text-gray-300 mb-4">{book.description}</p>
+  <p className="text-sm text-gray-300 mb-4">{
+    book.description && book.description.length > 90
+      ? `${book.description.slice(0, 90)}...`
+      : book.description ?? ""
+    }</p>
 
   <div className="flex items-center justify-between">
     <p className=" text-sm flex items-center gap-1.5 text-gray-200">
@@ -86,9 +90,9 @@ const FeaturedBooks: React.FC = () => {
     <button
       disabled={!book.available}
       onClick={() => handleBorrow(book)}
-      className={`py-2 px-4 rounded-lg font-medium transition ${
+      className={`py-2 px-4 rounded-lg font-medium  transition ${
         book.available
-          ? "bg-blue-600 hover:bg-blue-700 text-white"
+          ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
           : "bg-gray-600 text-white cursor-not-allowed"
       }`}
     >
@@ -198,13 +202,13 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-600 rounded"
+              className="px-4 py-2 bg-gray-600 rounded cursor-pointer"
             >
               Close
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded"
+              className="px-4 py-2 bg-yellow-600 cursor-pointer hover:bg-yellow-700 rounded"
             >
               {borrowLoading ? 'Borrowing...' :  'Confirm Borrow'}
             </button>

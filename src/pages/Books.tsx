@@ -56,7 +56,7 @@ const Books: React.FC = () => {
 
       <div>
         <Link to="/create-book">
-          <button className="ml-auto block mb-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">
+          <button className="ml-auto cursor-pointer block mb-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">
             + Add New Book
           </button>
         </Link>
@@ -97,26 +97,28 @@ const Books: React.FC = () => {
                 <td className="px-4 py-3 text-center space-x-2">
                   <Link to={`/books/${book._id}`}>
                     <button
-                      className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
+                      className="bg-gray-600 cursor-pointer hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
                     >
                       View
                     </button>
                   </Link>
                   <Link to={`/edit-book/${book._id}`}>
                   <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
+                    className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
                   >
                     Edit
                   </button>
                   </Link>
                   <button
-                    className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                    disabled={!book.available}
+                      className={`bg-yellow-600 ${book.available ? 'cursor-pointer' : 'cursor-no-drop'} hover:bg-yellow-700
+                      text-white px-3 py-1 rounded text-sm`}
                     onClick={() => handleBorrow(book)}
                   >
                     Borrow
                   </button>
                   <button
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                    className="bg-red-600 cursor-pointer hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                     onClick={() => handleDelete(book)}
                   >
                     Delete
@@ -238,13 +240,13 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-600 rounded"
+              className="px-4 py-2 cursor-pointer bg-gray-600 rounded"
             >
               Close
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded"
+              className="px-4 py-2 cursor-pointer bg-yellow-600 hover:bg-yellow-700 rounded"
             >
               {borrowLoading ? 'Borrowing...' :  'Confirm Borrow'}
             </button>
@@ -290,13 +292,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       <div className="flex justify-end space-x-2">
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-gray-600 rounded"
+          className="px-4 py-2 cursor-pointer bg-gray-600 rounded"
         >
           Cancel
         </button>
         <button
           onClick={handleDelete}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+          className="px-4 py-2 bg-red-600 cursor-pointer hover:bg-red-700 rounded"
         >
          {isLoading ? 'Deleting' : 'Delete'}
         </button>

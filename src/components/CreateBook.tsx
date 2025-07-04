@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAddBookMutation } from "../controllers/apiSlice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 interface Form {
   title: string;
@@ -13,6 +14,7 @@ interface Form {
 }
 
 const CreateBook: React.FC = () => {
+  const navigate = useNavigate();
   const intiForm : Form ={
     title: "",
     author: "",
@@ -42,6 +44,7 @@ const CreateBook: React.FC = () => {
       await addBook(form).unwrap();
       setForm(intiForm);
       toast.success('Book create successfull.')
+      navigate('/books')
     } catch (err: any) {
       if(err?.data?.error?.errors?.isbn?.message){
         toast.error(err?.data?.error?.errors?.isbn?.message);
