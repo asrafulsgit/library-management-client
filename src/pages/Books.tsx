@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useBorrowBookMutation, useDeleteBookMutation, useGetBooksQuery } from "../controllers/apiSlice";
 import type { Book } from "../interfaces/book.interface";
+import { toast } from "react-toastify";
 
 
 
@@ -170,12 +171,12 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
     e.preventDefault();
 
     if (quantity <= 0) {
-      alert("Quantity must be at least 1.");
+      toast.error("Quantity must be at least 1.")
       return;
     }
 
     if (quantity > book.copies) {
-      alert("Quantity exceeds available copies.");
+      toast.error("Quantity exceeds available copies.")
       return;
     }
 
@@ -186,10 +187,10 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
       dueDate: dueDate,
     }).unwrap();
     onClose();
+    toast.success('Book borrow successfull.')
     navigate("/borrow-summary");
-  } catch (err) {
-    console.error("Borrow error:", err);
-    alert("Failed to borrow the book.");
+  } catch (err : any) {
+    toast.error("Failed to borrow the book.")
   }
   };
 
@@ -272,9 +273,9 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     try {
       await deleteBook(book?._id).unwrap();
       onConfirm()
-    } catch (err) {
-      console.error("Failed to delete the book:", err);
-      alert("Failed to delete the book.");
+      toast.success('Book delete successfull.')
+    } catch (err : any) {
+      toast.error("Failed to delete the book.")
     }
   }
   

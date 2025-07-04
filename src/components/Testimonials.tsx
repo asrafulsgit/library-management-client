@@ -47,7 +47,7 @@ const StarIcon: React.FC<{ filled: boolean }> = ({ filled }) => (
 const Testimonials: React.FC = () => {
   return (
     <section id="testimonials" className="py-16 bg-neutral-900 text-white">
-      <div className="container mx-auto px-4">
+      <div className=" mx-auto px-5">
         
 
         <div className="pb-3">

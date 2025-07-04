@@ -35,6 +35,10 @@ export const apiSlice = createApi({
       query: () => "/api/books",
       providesTags: ["Books"],
     }),
+    getFeaturedBooks: builder.query<GetAllBooksResponse, void>({
+      query: () => "/api/featured-borrow",
+      providesTags: ["Books"],
+    }),
     getBookById: builder.query<GetBooksResponse, string>({
       query: (id) => `/api/books/${id}`,
       providesTags: ["Books"],
@@ -79,6 +83,7 @@ export const apiSlice = createApi({
 
 export const {
   useGetBooksQuery,
+  useGetFeaturedBooksQuery,
   useGetBookByIdQuery,
   useAddBookMutation,
   useUpdateBookMutation,

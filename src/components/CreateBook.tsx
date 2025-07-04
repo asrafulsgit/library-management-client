@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAddBookMutation } from "../controllers/apiSlice";
+import { toast } from "react-toastify";
 
 interface Form {
   title: string;
@@ -32,8 +33,7 @@ const CreateBook: React.FC = () => {
       [name]: name === "copies" ? Number(value) : value,
     }));
   };
- console.log(form)
-  // 4️⃣ Handle submit
+  //  Handle submit
   const [addBook, { isLoading , error , isSuccess }] = useAddBookMutation();
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
@@ -41,10 +41,16 @@ const CreateBook: React.FC = () => {
     try {
       await addBook(form).unwrap();
       setForm(intiForm);
-    } catch (error) {
-      console.log(error)
+      toast.success('Book create successfull.')
+    } catch (err: any) {
+      if(err?.data?.error?.errors?.isbn?.message){
+        toast.error(err?.data?.error?.errors?.isbn?.message);
+      }else{
+        toast.error(err?.data?.message)
+      }
     }
   };
+
 
   return (
     <section className="pt-25 pb-16 bg-base-100 text-white min-h-screen">

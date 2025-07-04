@@ -1,4 +1,7 @@
 import React from "react";
+import locationImage from '../assets/location.png'
+import emailImage from '../assets/email.png'
+import phoneImage from '../assets/phone.png'
 
 const Contact : React.FC = () => {
   return (
@@ -15,20 +18,10 @@ const Contact : React.FC = () => {
         <div className="grid md:grid-cols-2 gap-10">
           {/* Contact Info */}
           <div className="space-y-6">
-            <div className="flex items-start space-x-4">
-              <svg
-                className="w-6 h-6 text-blue-500 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17 20h5V4H2v16h5m10 0v2H7v-2"
-                />
-              </svg>
+            <div className="flex items-start ">
+              <div className="mt-1 w-12 ">
+                <img src={locationImage} alt="location" className="h-7 mx-auto" />
+                </div>
               <div>
                 <h3 className="font-semibold">Address</h3>
                 <p className="text-gray-400">
@@ -37,39 +30,19 @@ const Contact : React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-start space-x-4">
-              <svg
-                className="w-6 h-6 text-blue-500 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 12H8m0 0H6m2 0l1.293 1.293a1 1 0 001.414 0L12 12m0 0l1.293 1.293a1 1 0 001.414 0L16 12z"
-                />
-              </svg>
+            <div className="flex items-start ">
+              <div className="mt-1 w-12">
+                <img src={emailImage} alt="location" className="h-7 mx-auto" />
+                </div>
               <div>
                 <h3 className="font-semibold">Email</h3>
                 <p className="text-gray-400">info@libraryapp.com</p>
               </div>
             </div>
-            <div className="flex items-start space-x-4">
-              <svg
-                className="w-6 h-6 text-blue-500 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 5h2l3 7v7a2 2 0 002 2h4a2 2 0 002-2v-7l3-7h2"
-                />
-              </svg>
+            <div className="flex items-start ">
+              <div className="mt-1 w-12">
+                <img src={phoneImage} alt="location" className="h-8 mx-auto" />
+                </div>
               <div>
                 <h3 className="font-semibold">Phone</h3>
                 <p className="text-gray-400">+1 (555) 123-4567</p>

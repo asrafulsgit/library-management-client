@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useGetBookByIdQuery, useUpdateBookMutation } from "../controllers/apiSlice";
 import type { Book } from "../interfaces/book.interface";
+import { toast } from "react-toastify";
 
 const EditBook: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,9 +48,10 @@ const EditBook: React.FC = () => {
         copies: book.copies
       }
     }).unwrap();
+    toast.success('Book updated')
      navigate("/books");
-    } catch (error) {
-      console.log(error)
+    } catch (err : any) {
+      toast.error('Failed to update the book.')
     }
     
   };

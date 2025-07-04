@@ -24,7 +24,6 @@ const BookDetails: React.FC = () => {
   }
 
   const book = data.data;
-  console.log(book)
   return (
     <section className="min-h-[90vh] pt-24 pb-12 px-4 max-w-3xl mx-auto text-white">
       {/* Header */}
