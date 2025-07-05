@@ -145,4 +145,7 @@ export const apiSlice = createApi({
 - 🔍 **Search & Filtering**  
   Allow searching by title, author, genre, and availability.
 
+- ⭐ **Book Reviews & Ratings**  
+  Let users leave reviews and ratings for each book.
+
 ---
