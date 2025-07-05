@@ -27,7 +27,7 @@ interface GetBorrowedSummary {
 }
 
 export const apiSlice = createApi({
-  reducerPath: "api", // Slice name
+  reducerPath: "api", 
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BACKEND_URL }),
   tagTypes: ["Books"],
   endpoints: (builder) => ({
@@ -36,7 +36,7 @@ export const apiSlice = createApi({
       providesTags: ["Books"],
     }),
     getFeaturedBooks: builder.query<GetAllBooksResponse, void>({
-      query: () => "/api/featured-borrow",
+      query: () => "/api/featured-books",
       providesTags: ["Books"],
     }),
     getBookById: builder.query<GetBooksResponse, string>({
