@@ -24,6 +24,7 @@ The **Library Management Application** is a full-stack web system designed to he
 ## 🧪 Technologies Used
 
 - ⚛️ **React** – Frontend Framework
+- 🟦 **TypeScript** — Static type checking for safer, cleaner code
 - 🎯 **Redux Toolkit & RTK Query** – State Management & Data Fetching
 
 ---
