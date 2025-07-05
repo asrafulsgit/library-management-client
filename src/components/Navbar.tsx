@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router";
+import LogoImage from '../assets/logo.png'
 import './navbar.css'
 
 const Navbar: React.FC = () => {
@@ -16,8 +17,9 @@ const Navbar: React.FC = () => {
       <div className="mx-auto py-4 px-5 
       flex items-center justify-between">
         {/* Logo */}
-        <Link to='/' className="text-2xl font-bold">
-          Book<span className="text-blue-600">Store</span>
+        <Link to='/' className="text-2xl font-bold flex gap-2 items-center">
+          <img src={LogoImage} alt="logo" className="h-9 w-9" />
+          <h1>Book<span className="text-blue-600">Store</span></h1>
         </Link>
 
         {/* Desktop Menu */}

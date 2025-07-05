@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import { useGetBookByIdQuery, useUpdateBookMutation } from "../controllers/apiSlice";
 import type { Book } from "../interfaces/book.interface";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 const EditBook: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,7 +77,11 @@ const EditBook: React.FC = () => {
   }
 
   return (
-    <section className="max-w-2xl mx-auto pt-25 pb-10 px-4 text-white">
+  <>  
+  <Helmet>
+          <title>BookStore | Update Book</title>
+         </Helmet>
+  <section className="max-w-2xl mx-auto pt-25 pb-10 px-4 text-white">
       <h1 className="text-3xl font-bold mb-4">
         Edit Book: <span className="text-blue-400">{book.title}</span>
       </h1>
@@ -183,7 +188,7 @@ const EditBook: React.FC = () => {
           </button>
         </div>
       </form>
-    </section>
+    </section></>
   );
 };
 

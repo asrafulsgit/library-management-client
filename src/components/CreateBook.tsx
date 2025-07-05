@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAddBookMutation } from "../controllers/apiSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { Helmet } from "react-helmet";
 
 interface Form {
   title: string;
@@ -56,7 +57,11 @@ const CreateBook: React.FC = () => {
 
 
   return (
-    <section className="pt-25 pb-16 bg-base-100 text-white min-h-screen">
+  <>  
+  <Helmet>
+          <title>BookStore | Add Book</title>
+         </Helmet>
+  <section className="pt-25 pb-16 bg-base-100 text-white min-h-screen">
       <div className="container mx-auto px-4 max-w-3xl">
         <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Add New Book</h2>
@@ -199,7 +204,7 @@ const CreateBook: React.FC = () => {
           </button>
         </form>
       </div>
-    </section>
+    </section></>
   );
 };
 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { useBorrowBookMutation, useDeleteBookMutation, useGetBooksQuery } from "../controllers/apiSlice";
 import type { Book } from "../interfaces/book.interface";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 
 
@@ -45,7 +46,11 @@ const Books: React.FC = () => {
     );
   }
   return (
-    <section className="min-h-[90vh] pt-25 pb-10 px-4 max-w-7xl mx-auto text-white">
+  <>  
+    <Helmet>
+            <title>BookStore | Books</title>
+           </Helmet>
+  <section className="min-h-[90vh] pt-25 pb-10 px-4 max-w-7xl mx-auto text-white">
       <div className="text-center">
         <h1 className="text-3xl md:text-4xl font-bold mb-3">Books</h1>
         <p className="text-gray-400 mb-6">
@@ -153,6 +158,7 @@ const Books: React.FC = () => {
 )}
 
     </section>
+    </>
   );
 };
 

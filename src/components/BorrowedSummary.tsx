@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGetBorrowedSummaryQuery, type BookSummary } from "../controllers/apiSlice";
+import { Helmet } from "react-helmet";
 
 const BorrowSummary: React.FC = () => {
 
@@ -20,7 +21,11 @@ const BorrowSummary: React.FC = () => {
   }
 
   return (
-    <section className="pt-25 pb-16 bg-base-100 text-white min-h-[90vh]">
+  <>  
+  <Helmet>
+          <title>BookStore | Borrow Summary</title>
+         </Helmet>
+  <section className="pt-25 pb-16 bg-base-100 text-white min-h-[90vh]">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Borrow Summary</h2>
@@ -51,7 +56,7 @@ const BorrowSummary: React.FC = () => {
           </table>
         </div>
       </div>
-    </section>
+    </section></>
   );
 };
 

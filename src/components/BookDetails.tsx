@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams, Link } from "react-router";
 import { useGetBookByIdQuery } from "../controllers/apiSlice";
+import { Helmet } from "react-helmet";
 
 const BookDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,10 @@ const BookDetails: React.FC = () => {
 
   const book = data.data;
   return (
+   <> 
+    <Helmet>
+            <title>BookStore | Book Details</title>
+           </Helmet>
     <section className="min-h-[90vh] pt-24 pb-12 px-4 max-w-3xl mx-auto text-white">
       {/* Header */}
       <div className="mb-6 border-b border-neutral-700 pb-4">
@@ -82,6 +87,7 @@ const BookDetails: React.FC = () => {
         </Link>
       </div>
     </section>
+    </>
   );
 };
 
