@@ -1,4 +1,3 @@
-import React from 'react'
 import Hero from '../components/Hero';
 import FeaturedBooks from '../components/FeaturedBooks';
 import About from '../components/About';

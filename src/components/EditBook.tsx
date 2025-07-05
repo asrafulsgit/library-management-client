@@ -10,8 +10,8 @@ const EditBook: React.FC = () => {
   const navigate = useNavigate();
 
   // const [triggerGetBooks] = useLazyGetBooksQuery();
-  const [updateBook, { isLoading : updateLoading, error : updateError }] = useUpdateBookMutation();
-  const { data, isLoading : intiLoading, error : getError } = useGetBookByIdQuery(id!);
+  const [updateBook, { isLoading : updateLoading }] = useUpdateBookMutation();
+  const { data, isLoading : intiLoading} = useGetBookByIdQuery(id!);
   const [book, setBook] = useState<Book | null>(null);
   
   useEffect(() => {

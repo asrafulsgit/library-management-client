@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import type { Book } from "../interfaces/book.interface";
-import { useBorrowBookMutation, useDeleteBookMutation, useGetFeaturedBooksQuery } from "../controllers/apiSlice";
+import { useBorrowBookMutation, useGetFeaturedBooksQuery } from "../controllers/apiSlice";
 import booksImage from '../assets/books.png'
 import { toast } from "react-toastify";
 
@@ -130,7 +130,7 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [dueDate, setDueDate] = useState("");
-  const [borrowBook, { isLoading : borrowLoading, error : borrowError, isSuccess }] = useBorrowBookMutation();
+  const [borrowBook, { isLoading : borrowLoading }] = useBorrowBookMutation();
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 

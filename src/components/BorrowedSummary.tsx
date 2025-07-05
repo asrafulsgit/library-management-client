@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 
 const BorrowSummary: React.FC = () => {
 
-  const {data, isLoading,error}=useGetBorrowedSummaryQuery();
+  const {data, isLoading}=useGetBorrowedSummaryQuery();
 
   const [summaries,setSummaries]=useState<BookSummary[] | null>(null);
   useEffect(()=>{

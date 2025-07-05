@@ -10,7 +10,7 @@ import { Helmet } from "react-helmet";
 
 
 const Books: React.FC = () => {
-  const { data, isLoading, error } = useGetBooksQuery();
+  const { data, isLoading } = useGetBooksQuery();
 
   const [books, setBooks] = useState<Book[]>([]);
 
@@ -174,7 +174,7 @@ const BorrowModal: React.FC<BorrowModalProps> = ({
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [dueDate, setDueDate] = useState("");
-  const [borrowBook, { isLoading : borrowLoading, error : borrowError, isSuccess }] = useBorrowBookMutation();
+  const [borrowBook, { isLoading : borrowLoading }] = useBorrowBookMutation();
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
@@ -275,7 +275,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   onConfirm,
 }) => {
 
-  const [deleteBook, { isLoading, error }] = useDeleteBookMutation();
+  const [deleteBook, { isLoading }] = useDeleteBookMutation();
 
   const handleDelete =async ()=>{
     try {

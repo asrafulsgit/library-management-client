@@ -37,7 +37,7 @@ const CreateBook: React.FC = () => {
     }));
   };
   //  Handle submit
-  const [addBook, { isLoading , error , isSuccess }] = useAddBookMutation();
+  const [addBook, { isLoading}] = useAddBookMutation();
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
